@@ -45,7 +45,8 @@ INSTALLED_APPS = [
 ]+[
     # your apps
     'products',
-    'payment'
+    'payment',
+    'user'
 ]+[
     # third party app
     'rest_framework',
