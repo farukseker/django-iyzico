@@ -1,11 +1,31 @@
 <template>
   <h2 class="text-xl font-bold">Ödeme Formu</h2>
-      
+  <!-- <div
+  v-if="show_form"
+  class="absolute flex w-full min-h-screen z-40 bg-gray-800 bg-opacity-50 top-0 left-0"
+  >
+    <iframe
+      class="m-auto w-[400px] h-[600px] border"
+      ref="form_3d"
+      href="http://localhost:8080/"
+      @load="handleIframeLoad"
+      referrerpolicy="
+        origin
+        origin-when-cross-origin
+        same-origin
+        strict-origin
+        strict-origin-when-cross-origin
+        unsafe-url
+      "
+      sandbox="allow-scripts allow-forms allow-same-origin"
+      ></iframe>
+  </div>   -->
   <fieldset class="fieldset w-xs bg-gray-750 border border-gray-400 font-semibold text-white p-4 rounded-box z-30">
     <legend class="fieldset-legend text-white">Oturum Yardımcısı</legend>
     <div class="flex gap-2">
       <button class="btn btn-primary" @click="login">Giriş Yap</button>
       <button class="btn btn-primary" @click="logout"> Çıkış Yap</button>
+      <button class="btn btn-error " @click="get_installment_info"> Taksit bilgisi Al</button>
     </div>
   </fieldset>
 
@@ -141,8 +161,37 @@
 </template>
 
 <script setup>
-import { onMounted, ref} from 'vue'
+import { onMounted, ref } from 'vue'
 import api from "@/utils/axios";
+// import { useRouter } from "vue-router";
+
+// import DOMPurify from "dompurify";
+// const router = useRouter();
+
+
+// const form_3d = ref(null)
+// const show_form = ref(false)
+
+
+// const renderHtml = (content) => {
+//   if (!form_3d.value) return;
+//   const decodedHtml = atob(content);
+//   console.log(decodedHtml)
+//   const iframe = form_3d.value
+//   const doc = iframe.contentDocument || iframe.contentWindow.document;
+//   doc.open();
+//   doc.write(decodedHtml);
+//   doc.close();
+// };
+
+const citys = ref([])
+
+const laod_citys = async () => {
+  const response = await fetch('/data/citys.json')
+  if (response.ok){
+    citys.value = await response.json()
+  }
+}
 
 const login = () => {
   api.post("/user/token", {
@@ -155,6 +204,25 @@ const login = () => {
 
 const logout = () => {localStorage.removeItem("token")}
 
+// const handleIframeLoad = () => {
+//   if (!form_3d.value) return;
+  
+//   try {
+//     const iframeWindow = form_3d.value.contentWindow;
+//     const currentUrl = iframeWindow.location.href;
+//     console.log("İframe yönlendirme URL:", currentUrl);
+
+//     if (currentUrl.includes("success")) {
+//       console.log("Ödeme başarılı!");
+//       router.push("/success");
+//     } else if (currentUrl.includes("failure")) {
+//       console.log("Ödeme başarısız!");
+//       router.push("/failure");
+//     }
+//   } catch (error) {
+//     console.warn("İframe içeriğine erişim engellendi (CORS olabilir).", error);
+//   }
+// };
 
 const product_list = ref([])
 
@@ -187,16 +255,45 @@ const credit_card_info = ref({
   isSave: false,
 })
 
+// const checkout_url = ref('')
+
 const pay = () => {
-  const api_request = {...credit_card_info.value, ...address_data.value, ...{basket: basket.value} }
+  const api_request = {
+    credit_card_info: credit_card_info.value,
+    address_info: address_data.value,
+    basket: basket.value
+  }
+  
   api.post("/payment", api_request)
-  .then(response => console.console.log(response.data))
+  
+  .then(response => {
+    // show_form.value = true
+    // checkout_url.value = response.data.checkout_url
+    window.location.href = response.data.checkout_url;
+
+    // router.push(response.data.checkout_url)
+    // nextTick(
+    //   renderHtml(response.data.form_3d)
+    // )
+  })
   .catch(error => console.error(error));
 }
 
+const get_installment_info = () => {
+  api.post("/installment", {
+    binNumber: credit_card_info.value.creditCardNumber.slice(0, 8),
+    price: 405
+  })
+  .then(response => {
+    console.log(response)
+    console.log(response.data)
+  })
+  .catch(error => console.error(error));
+}
 
 onMounted(()=> {
-  load_product_list()
+  load_product_list();
+  laod_citys();
 })
 
 </script>

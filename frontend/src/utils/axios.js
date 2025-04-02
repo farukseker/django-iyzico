@@ -35,7 +35,7 @@ api.interceptors.response.use(
       console.warn("Yetkisiz erişim, çıkış yapılıyor...");
       localStorage.removeItem("token");
       sessionStorage.removeItem("token");
-      window.location.href = "/login"; // Kullanıcıyı login sayfasına yönlendir
+      // window.location.href = "/login"; // Kullanıcıyı login sayfasına yönlendir
     }
     return Promise.reject(error);
   }
