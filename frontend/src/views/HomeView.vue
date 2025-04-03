@@ -163,26 +163,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import api from "@/utils/axios";
-// import { useRouter } from "vue-router";
 
-// import DOMPurify from "dompurify";
-// const router = useRouter();
-
-
-// const form_3d = ref(null)
-// const show_form = ref(false)
-
-
-// const renderHtml = (content) => {
-//   if (!form_3d.value) return;
-//   const decodedHtml = atob(content);
-//   console.log(decodedHtml)
-//   const iframe = form_3d.value
-//   const doc = iframe.contentDocument || iframe.contentWindow.document;
-//   doc.open();
-//   doc.write(decodedHtml);
-//   doc.close();
-// };
 
 const citys = ref([])
 
@@ -204,25 +185,6 @@ const login = () => {
 
 const logout = () => {localStorage.removeItem("token")}
 
-// const handleIframeLoad = () => {
-//   if (!form_3d.value) return;
-  
-//   try {
-//     const iframeWindow = form_3d.value.contentWindow;
-//     const currentUrl = iframeWindow.location.href;
-//     console.log("İframe yönlendirme URL:", currentUrl);
-
-//     if (currentUrl.includes("success")) {
-//       console.log("Ödeme başarılı!");
-//       router.push("/success");
-//     } else if (currentUrl.includes("failure")) {
-//       console.log("Ödeme başarısız!");
-//       router.push("/failure");
-//     }
-//   } catch (error) {
-//     console.warn("İframe içeriğine erişim engellendi (CORS olabilir).", error);
-//   }
-// };
 
 const product_list = ref([])
 
